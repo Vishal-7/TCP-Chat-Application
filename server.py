@@ -15,20 +15,29 @@ nicknames= []
 
 # Sending messages to all the connected clients
 def broadcast(message):
+    """
+    Function that is used to broadcast messages to different clients connected to the server
+    """
     for client in clients:
         client.send(message)
 
 def handle(client):
+    """
+    Function that handles different types of messages from clients connected to the server
+    """
     while True:
         try:
             msg = message = client.recv(1024)
 
+            """ Code segment that involves with kicking out the user by a moderator """
             if message.decode('ascii').startswith("KICK"):
                 if nicknames[clients.index(client)] == "admin":
                     name_to_kick = msg.decode('ascii')[5:]
                     kick_user(name_to_kick)
                 else:
-                    client.send("Command was refused!".encode('ascii'))
+                    client.send("Command was refused!".encode('ascii')) # Command refused to execute as the user is not a moderator
+
+            """ Code segment that involves with banning the user by a moderator """        
             elif message.decode('ascii').startswith("BAN"):
                 if nicknames[clients.index(client)] == "admin":
                     name_to_ban = msg.decode('ascii')[4:]
